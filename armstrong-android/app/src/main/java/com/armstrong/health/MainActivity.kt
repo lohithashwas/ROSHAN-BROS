@@ -29,7 +29,8 @@ class MainActivity : AppCompatActivity() {
         webSettings.loadWithOverviewMode = true
         webSettings.useWideViewPort = true
         webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        webSettings.cacheMode = WebSettings.LOAD_DEFAULT
+        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
+        webView.clearCache(true)
 
         // Enable hardware acceleration for smooth rendering (like CSS transitions and animations)
         webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null)

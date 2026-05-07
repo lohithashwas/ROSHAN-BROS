@@ -84,6 +84,14 @@
     form button:hover {
       background-color: #0099cc;
     }
+
+    /* ─── MOBILE BOTTOM NAV ─── */
+    .mob-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f0f1a; border-top: 1px solid #1a1a2e; z-index: 2000; padding: 8px 0; }
+    .mob-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+    .mob-nav a { color: #aaa; text-decoration: none; font-size: .65rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color .2s; }
+    .mob-nav a span.ic { font-size: 1.3rem; }
+    .mob-nav a:hover, .mob-nav a.active { color: #00bfff; }
+    body { padding-bottom: 90px; }
   </style>
 </head>
 <body>
@@ -154,5 +162,15 @@
   });
 </script>
 
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="mob-nav">
+    <div class="mob-nav-inner">
+      <a href="app.html"><span class="ic">📊</span>Dashboard</a>
+      <a href="reminders.html"><span class="ic">🔔</span>Reminders</a>
+      <a href="ai_plan.html"><span class="ic">🤖</span>AI Plan</a>
+      <a href="appointment.html" class="active"><span class="ic">📅</span>Appointments</a>
+      <a href="blockchain.html"><span class="ic">🔐</span>Security</a>
+    </div>
+  </nav>
 </body>
 </html>

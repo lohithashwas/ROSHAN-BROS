@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armstrong – Medication & Lab Reminders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a12; font-family: 'Inter', sans-serif; color: #e0e0e0; padding: 20px; min-height: 100vh; padding-bottom: 90px; }
+    h1 { text-align: center; margin-bottom: 8px; color: #7df9ff; font-size: 1.6rem; letter-spacing: 1px; }
+    .subtitle { text-align: center; color: #555; font-size: .85rem; margin-bottom: 24px; }
+    
+    .panel { max-width: 600px; margin: 0 auto; background: #12121a; border-radius: 18px; padding: 20px; border: 1px solid #1a1a2e; }
+    .panel h2 { color: #7df9ff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    
+    .reminder-card { background: #0f0f1a; border-radius: 12px; padding: 16px; border-left: 4px solid #00bfff; margin-bottom: 14px; position: relative; }
+    .reminder-card.med { border-left-color: #59fba6; }
+    .reminder-card.lab { border-left-color: #f1c40f; }
+    .reminder-card.exercise { border-left-color: #ff6b6b; }
+    
+    .r-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .r-title { font-size: .9rem; font-weight: 600; color: #e0e0e0; }
+    .r-detail { font-size: .78rem; color: #888; margin-top: 3px; }
+    .r-time { font-size: .8rem; color: #00bfff; font-weight: 600; margin-top: 6px; }
+    
+    /* ─── MOBILE BOTTOM NAV ─── */
+    .mob-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f0f1a; border-top: 1px solid #1a1a2e; z-index: 2000; padding: 8px 0; }
+    .mob-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+    .mob-nav a { color: #aaa; text-decoration: none; font-size: .65rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color .2s; }
+    .mob-nav a span.ic { font-size: 1.3rem; }
+    .mob-nav a:hover, .mob-nav a.active { color: #00bfff; }
+  </style>
+</head>
+<body>
+  <h1>🔔 Medication & Lab Reminders</h1>
+  <p class="subtitle">Personalized care reminders based on your clinical profile</p>
+
+  <div class="panel">
+    <h2>📋 Your Active Care Reminders</h2>
+    
+    <div class="reminder-card med">
+      <div class="r-icon">💊</div>
+      <div class="r-title">Iron Supplement (Ferrous Ascorbate)</div>
+      <div class="r-detail">Take with orange juice or water on an empty stomach. Avoid tea/coffee for 2h before and after.</div>
+      <div class="r-time">Daily – 1:00 PM (After Lunch)</div>
+    </div>
+
+    <div class="reminder-card lab">
+      <div class="r-icon">🩺</div>
+      <div class="r-title">Blood Pressure Check</div>
+      <div class="r-detail">Weekly check-in at the local nurse station or automatic logging via TI-Band.</div>
+      <div class="r-time">Every Friday – 10:00 AM</div>
+    </div>
+
+    <div class="reminder-card med">
+      <div class="r-icon">💊</div>
+      <div class="r-title">Calcium Carbonate Tablet</div>
+      <div class="r-detail">Do not take at the same time as Iron supplements. Essential for fetal skeletal development.</div>
+      <div class="r-time">Daily – 7:30 PM (After Dinner)</div>
+    </div>
+
+    <div class="reminder-card lab">
+      <div class="r-icon">🔬</div>
+      <div class="r-title">CBC + Haemoglobin Lab Test</div>
+      <div class="r-detail">Required for monitoring iron levels, infection risk, and overall red blood cell counts.</div>
+      <div class="r-time">Monthly – 8:00 AM (Fasting)</div>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="mob-nav">
+    <div class="mob-nav-inner">
+      <a href="app.html"><span class="ic">📊</span>Dashboard</a>
+      <a href="reminders.html" class="active"><span class="ic">🔔</span>Reminders</a>
+      <a href="ai_plan.html"><span class="ic">🤖</span>AI Plan</a>
+      <a href="appointment.html"><span class="ic">📅</span>Appointments</a>
+      <a href="blockchain.html"><span class="ic">🔐</span>Security</a>
+    </div>
+  </nav>
+</body>
+</html>
