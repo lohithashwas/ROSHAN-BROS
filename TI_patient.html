@@ -940,6 +940,19 @@ TI_patient.html
                 });
             });
         }
+
+        // Universal smooth scroll handler to bypass Android WebView anchor navigation bugs
+        const hashLinks = document.querySelectorAll('a[href^="#"]');
+        hashLinks.forEach(link => {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute("href").substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            });
+        });
     });
 </script>
 
@@ -1483,11 +1496,11 @@ TI_patient.html
     </style>
     <nav class="mob-nav">
       <div class="mob-nav-inner">
-        <a href="app.html" target="_blank"><span class="ic">📊</span>Dashboard</a>
+        <a href="app.html"><span class="ic">📊</span>Dashboard</a>
         <a href="#reminders"><span class="ic">🔔</span>Reminders</a>
         <a href="#recomendation"><span class="ic">🤖</span>AI Plan</a>
         <a href="appointment.html"><span class="ic">📅</span>Appointments</a>
-        <a href="blockchain.html" target="_blank"><span class="ic">🔐</span>Security</a>
+        <a href="blockchain.html"><span class="ic">🔐</span>Security</a>
       </div>
     </nav>
         <div class="container">
