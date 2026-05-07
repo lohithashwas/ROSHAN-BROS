@@ -1290,8 +1290,30 @@
         // Initialize the vital signs updater
         updateVitalSigns();
     });
+</script>
+<script>
+    // Robust, WebView-optimized scroll handler that prevents viewport blanking freezes
+    function initWebViewScroll() {
+        const hashLinks = document.querySelectorAll('a[href^="#"]');
+        hashLinks.forEach(link => {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute("href").substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    // Calculate exact offset and scroll instantly to avoid layout/viewport freezing bugs
+                    const topOffset = targetEl.offsetTop;
+                    window.scrollTo(0, topOffset);
+                }
+            });
+        });
+    }
 
-    
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initWebViewScroll);
+    } else {
+        initWebViewScroll();
+    }
 </script>
 </body>
 </html>
