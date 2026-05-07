@@ -649,20 +649,48 @@
         
         @media (max-width: 768px) {
             .header-content {
-                flex-direction: column;
-                text-align: center;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .mobile-toggle {
+                display: block;
+                z-index: 2001;
             }
             
             nav {
-                margin-top: 20px;
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: rgba(10, 10, 18, 0.98);
+                backdrop-filter: blur(10px);
+                z-index: 2000;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                margin-top: 0 !important;
+            }
+            
+            nav.active {
+                display: flex;
             }
             
             nav ul {
                 flex-direction: column;
+                align-items: center;
             }
             
             nav ul li {
-                margin: 10px 0;
+                margin: 15px 0;
+            }
+            
+            nav ul li a {
+                font-size: 1.4rem;
             }
             
             .hero h2 {
@@ -850,6 +878,27 @@
                                           
                     </ul>
                 </nav>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toggleBtn = document.querySelector(".mobile-toggle");
+        const nav = document.querySelector("header nav");
+        const navLinks = document.querySelectorAll("header nav ul li a");
+
+        if (toggleBtn && nav) {
+            toggleBtn.addEventListener("click", function() {
+                nav.classList.toggle("active");
+                toggleBtn.textContent = nav.classList.contains("active") ? "✕" : "☰";
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener("click", function() {
+                    nav.classList.remove("active");
+                    toggleBtn.textContent = "☰";
+                });
+            });
+        }
+    });
+</script>
             </div>
         </div>
     </header>

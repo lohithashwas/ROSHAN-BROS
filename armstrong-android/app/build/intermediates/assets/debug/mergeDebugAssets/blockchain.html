@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Security – Armstrong</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#0a0a12;font-family:'Inter',sans-serif;color:#e0e0e0;padding:30px 20px;min-height:100vh;}
+    .container{max-width:900px;margin:0 auto;}
+    h1{color:#7df9ff;text-align:center;font-size:1.9rem;margin-bottom:6px;}
+    .sub{text-align:center;color:#666;font-size:.9rem;margin-bottom:36px;}
+
+    /* wallet card */
+    .wallet-card{background:#12121a;border:1px solid #1a1a2e;border-radius:16px;padding:28px;text-align:center;margin-bottom:32px;}
+    .wallet-card h2{color:#f6851b;margin-bottom:16px;font-size:1.2rem;}
+    button{background:linear-gradient(45deg,#f6851b,#e8a34f);color:#fff;font-size:1rem;padding:12px 30px;border:none;border-radius:10px;cursor:pointer;transition:transform .2s,box-shadow .2s;font-family:'Inter',sans-serif;}
+    button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(246,133,27,.4);}
+    .info{font-size:.9rem;margin-top:14px;color:#aaa;line-height:1.7;}
+    .info span{color:#59fba6;}
+
+    /* comparison table */
+    .section-title{color:#00bfff;font-size:1.2rem;font-weight:600;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+    .card{background:#12121a;border:1px solid #1a1a2e;border-radius:16px;padding:24px;margin-bottom:24px;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:rgba(0,191,255,.1);color:#00bfff;padding:12px 14px;text-align:left;font-size:.85rem;}
+    td{padding:11px 14px;font-size:.83rem;border-bottom:1px solid #1a1a2e;color:#ccc;vertical-align:top;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(0,191,255,.04);}
+    .yes{color:#59fba6;font-weight:600;}
+    .no{color:#ff6b6b;}
+    .partial{color:#ffb347;}
+
+    /* verdict */
+    .verdict{background:linear-gradient(135deg,#0d1f1a,#0a1a0a);border:1px solid #59fba6;border-radius:14px;padding:20px 24px;}
+    .verdict h3{color:#59fba6;margin-bottom:10px;}
+    .verdict p{font-size:.85rem;color:#aaa;line-height:1.7;}
+
+    /* future blockchain */
+    .future{background:linear-gradient(135deg,#1a1228,#120a1a);border:1px solid #b66eff;border-radius:14px;padding:20px 24px;}
+    .future h3{color:#b66eff;margin-bottom:10px;}
+    .future ul{padding-left:18px;font-size:.84rem;color:#aaa;line-height:2;}
+
+    @media(max-width:600px){th,td{padding:8px 10px;font-size:.75rem;}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🔐 Data Security & Storage</h1>
+  <p class="sub">How Armstrong protects your health vitals</p>
+
+  <!-- Wallet Connect Demo -->
+  <div class="wallet-card">
+    <h2>🦊 Blockchain Explorer (Research Demo)</h2>
+    <p style="color:#888;font-size:.85rem;margin-bottom:16px;">Connect MetaMask to explore on-chain health record concepts</p>
+    <button id="connectBtn">Connect Wallet</button>
+    <div class="info" id="walletInfo">Wallet not connected</div>
+    <div class="info" id="balanceInfo"></div>
+    <div class="info" id="networkInfo"></div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="card">
+    <div class="section-title">📊 Storage Technology Comparison</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>⛓ Blockchain</th>
+          <th>🔥 Firebase RTDB <span style="color:#59fba6">(Current)</span></th>
+          <th>💾 Local Storage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Real-time sync</strong></td>
+          <td class="no">❌ High latency (block confirmation)</td>
+          <td class="yes">✅ &lt;100ms real-time push</td>
+          <td class="no">❌ Device-only</td>
+        </tr>
+        <tr>
+          <td><strong>Data tamper-proof</strong></td>
+          <td class="yes">✅ Immutable ledger</td>
+          <td class="partial">⚠️ Admin-controlled (secure rules set)</td>
+          <td class="no">❌ Easily modified</td>
+        </tr>
+        <tr>
+          <td><strong>Cost</strong></td>
+          <td class="no">❌ Gas fees per transaction</td>
+          <td class="yes">✅ Free tier / low cost</td>
+          <td class="yes">✅ Free</td>
+        </tr>
+        <tr>
+          <td><strong>Multi-device access</strong></td>
+          <td class="partial">⚠️ Via wallet only</td>
+          <td class="yes">✅ Any device, any time</td>
+          <td class="no">❌ Single device only</td>
+        </tr>
+        <tr>
+          <td><strong>Doctor access / sharing</strong></td>
+          <td class="partial">⚠️ Complex smart contracts needed</td>
+          <td class="yes">✅ Role-based security rules</td>
+          <td class="no">❌ Manual export needed</td>
+        </tr>
+        <tr>
+          <td><strong>Emergency data access</strong></td>
+          <td class="no">❌ Slow (blockchain read time)</td>
+          <td class="yes">✅ Instant read</td>
+          <td class="no">❌ Not available remotely</td>
+        </tr>
+        <tr>
+          <td><strong>Setup complexity</strong></td>
+          <td class="no">❌ High – Solidity, nodes, wallets</td>
+          <td class="yes">✅ Low – SDK + config</td>
+          <td class="yes">✅ Trivial</td>
+        </tr>
+        <tr>
+          <td><strong>Audit trail</strong></td>
+          <td class="yes">✅ Full immutable history</td>
+          <td class="partial">⚠️ Available via Cloud Functions</td>
+          <td class="no">❌ None</td>
+        </tr>
+        <tr>
+          <td><strong>Scalability</strong></td>
+          <td class="no">❌ TPS limits on most chains</td>
+          <td class="yes">✅ Google infrastructure</td>
+          <td class="no">❌ Limited to device storage</td>
+        </tr>
+        <tr>
+          <td><strong>HIPAA-readiness</strong></td>
+          <td class="partial">⚠️ Possible but complex</td>
+          <td class="yes">✅ BAA available with Google</td>
+          <td class="no">❌ No compliance</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict" style="margin-bottom:24px;">
+    <h3>✅ Why Armstrong Uses Firebase Realtime Database</h3>
+    <p>
+      For a real-time maternal health monitoring system, <strong style="color:#59fba6;">speed, security, and open-source reliability are critical</strong>. Armstrong uses <strong style="color:#59fba6;">Firebase RTDB</strong> as its primary backend — it provides sub-100ms push updates via WebSocket when the TI-Band sensor hardware writes new vitals, while keeping all data in a structured JSON tree.<br><br>
+      Blockchain was evaluated but rejected for primary storage because: <strong style="color:#ffb347;">gas fees per vital sign update would be cost-prohibitive</strong> (vitals update every 2–3 seconds = ~40,000+ writes/day), and block confirmation latency is unacceptable for emergency alerts.<br><br>
+      Firebase Security Rules ensure only authenticated devices can write, and only the patient's doctor can read their data — achieving <strong style="color:#59fba6;">HIPAA-grade access control without blockchain complexity</strong>. The Firebase <code>sensor_data/device_001</code> reference is the single source of truth for all vitals.
+    </p>
+  </div>
+
+
+  <!-- Future blockchain roadmap -->
+  <div class="future">
+    <h3>🔮 Future: Hybrid Approach (Roadmap)</h3>
+    <ul>
+      <li>🔥 <strong>Firebase</strong> — real-time vitals streaming (current, stays)</li>
+      <li>⛓ <strong>Blockchain (IPFS + Polygon)</strong> — monthly health audit trail snapshots (immutable records)</li>
+      <li>🔑 <strong>Patient owns private key</strong> — consent-based doctor data sharing via smart contract</li>
+      <li>📋 <strong>NFT health passport</strong> — portable medical history across hospitals</li>
+      <li>🏥 <strong>Insurance integration</strong> — verified claims via on-chain health records</li>
+    </ul>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+  import { getDatabase, ref, onChildAdded, onChildChanged, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+  const firebaseConfig = {
+    databaseURL: "https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const connectBtn = document.getElementById('connectBtn');
+  connectBtn.onclick = () => {
+    document.getElementById('walletInfo').innerHTML = `🔄 Connecting to Firebase RTDB...`;
+    
+    const vitalsRef = query(ref(db, '/'), limitToLast(10));
+    let dataFound = false;
+
+    function processFirebaseData(snapshot) {
+      const data = snapshot.val();
+      if (data && typeof data === 'object' && data.heart_rate !== undefined) {
+        dataFound = true;
+        document.getElementById('walletInfo').innerHTML = `✅ Connected to Firebase: <span>Live Data Feed Active</span>`;
+        document.getElementById('balanceInfo').innerHTML = `💓 HR: <span>${data.heart_rate} bpm</span> | 🫁 SpO2: <span>${data.spo2}%</span>`;
+        document.getElementById('networkInfo').innerHTML = `🌐 DB Region: <span>asia-southeast1</span>`;
+      }
+    }
+
+    onChildAdded(vitalsRef, processFirebaseData);
+    onChildChanged(vitalsRef, processFirebaseData);
+
+    setTimeout(() => {
+      if(!dataFound) {
+        document.getElementById('walletInfo').innerHTML = `❌ Connected to Firebase, but no valid data found at root`;
+      }
+    }, 3000);
+  };
+</script>
+</body>
+</html>

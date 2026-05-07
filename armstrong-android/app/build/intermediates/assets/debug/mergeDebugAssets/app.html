@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armstrong – Live Health Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#0a0a12;font-family:'Inter',sans-serif;color:#e0e0e0;padding:20px;min-height:100vh;}
+    h1{text-align:center;margin-bottom:8px;color:#7df9ff;font-size:1.6rem;letter-spacing:1px;}
+    .subtitle{text-align:center;color:#555;font-size:.85rem;margin-bottom:24px;}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:0 auto;}
+    .card{background:#12121a;border-radius:16px;box-shadow:0 0 12px rgba(0,0,0,.5);padding:18px;display:flex;flex-direction:column;gap:6px;border:1px solid #1a1a2e;transition:all .3s;}
+    .card:hover{transform:translateY(-4px);box-shadow:0 0 22px rgba(125,249,255,.15);}
+    .metric-title{font-size:.9rem;color:#aaa;display:flex;align-items:center;gap:8px;}
+    .metric-value{font-size:1.9rem;font-weight:700;color:#fff;}
+    .badge{padding:3px 10px;border-radius:20px;font-size:.75rem;display:inline-block;}
+    .ok{background:#1e2f26;color:#59fba6;}
+    .warn{background:#3d2a1e;color:#ffb347;}
+    .crit{background:#3d1e1e;color:#ff6b6b;}
+    .info-text{font-size:.72rem;color:#666;}
+
+    /* sleep card → dimmed/estimated */
+    .card.sleep-dim{opacity:.55;border:1px dashed #333;}
+    .card.sleep-dim .metric-title::after{content:" (Estimated)";font-size:.7rem;color:#f1c40f;}
+
+    /* medication card */
+    .med-list{list-style:none;margin-top:4px;}
+    .med-list li{display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0;border-bottom:1px solid #1e1e2e;}
+    .med-list li:last-child{border-bottom:none;}
+    .med-time{color:#7df9ff;font-weight:600;}
+
+    /* ECG wave */
+    .ecg-wave{height:36px;background:linear-gradient(90deg,#59fba6,#7df9ff);border-radius:20px;position:relative;overflow:hidden;}
+    .ecg-wave::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:pulse 2s infinite;}
+    @keyframes pulse{0%{left:-100%}100%{left:100%}}
+    .ecg-wave.irreg::before{background:linear-gradient(90deg,transparent,rgba(255,107,107,.5),transparent);animation-duration:1.4s;}
+
+    /* stress meter */
+    .stress-meter{height:8px;background:linear-gradient(90deg,#59fba6,#ffb347,#ff6b6b);border-radius:4px;position:relative;margin:4px 0;}
+    .stress-dot{position:absolute;top:-2px;width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,.4);transition:left .3s;}
+
+    /* fall blink */
+    .fall-dot{width:14px;height:14px;border-radius:50%;background:#59fba6;display:inline-block;animation:blink 2s infinite;}
+    @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.3}}
+
+    /* ─── REMINDERS PANEL ─── */
+    .reminders-panel{max-width:1100px;margin:24px auto 0;background:#12121a;border-radius:18px;padding:20px 24px;border:1px solid #1a1a2e;}
+    .reminders-panel h2{color:#7df9ff;font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .reminder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+    .reminder-card{background:#0f0f1a;border-radius:12px;padding:14px;border-left:4px solid #00bfff;position:relative;}
+    .reminder-card.med{border-left-color:#59fba6;}
+    .reminder-card.lab{border-left-color:#f1c40f;}
+    .reminder-card.exercise{border-left-color:#ff6b6b;}
+    .reminder-card.meditate{border-left-color:#b66eff;}
+    .r-icon{font-size:1.5rem;margin-bottom:6px;}
+    .r-title{font-size:.85rem;font-weight:600;color:#e0e0e0;}
+    .r-detail{font-size:.75rem;color:#888;margin-top:3px;}
+    .r-time{font-size:.8rem;color:#00bfff;font-weight:600;margin-top:6px;}
+    .countdown{font-size:.7rem;color:#f1c40f;margin-top:2px;}
+
+    /* checklist */
+    .checklist{text-align:center;margin-top:22px;padding-top:18px;border-top:1px solid #1e1e2e;}
+    .checklist h2{color:#7df9ff;font-size:1rem;margin-bottom:10px;}
+    .checklist label{margin:0 12px;font-size:.9rem;cursor:pointer;}
+    .checklist input[type=checkbox]{transform:scale(1.3);margin-right:6px;}
+
+    @media(max-width:768px){
+      .grid{grid-template-columns:1fr 1fr;}
+      h1{font-size:1.3rem;}
+    }
+    @media(max-width:480px){
+      .grid{grid-template-columns:1fr;}
+      body{padding:12px;}
+    }
+  </style>
+</head>
+<body>
+  <h1>⌚ Armstrong Live Dashboard</h1>
+  <p class="subtitle">Real-time vitals from TI-Band · Updated every 2s</p>
+
+  <div class="grid">
+    <!-- Row 1 -->
+    <div class="card">
+      <div class="metric-title">💓 Heart Rate</div>
+      <div id="heartRate" class="metric-value">-- bpm</div>
+      <span id="hrBadge" class="badge ok">Normal</span>
+      <div class="info-text">Past 24h: Stable</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">🩸 Blood Pressure</div>
+      <div id="bp" class="metric-value">--/--</div>
+      <span id="bpBadge" class="badge ok">Normal</span>
+      <div class="info-text">Past 24h: Stable</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">🫁 SpO₂</div>
+      <div id="spo2" class="metric-value">--%</div>
+      <span id="spo2Badge" class="badge ok">Normal</span>
+      <div class="info-text">Oxygen saturation</div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="card">
+      <div class="metric-title">🌡️ Temperature</div>
+      <div id="temperature" class="metric-value">--°C</div>
+      <span id="tempBadge" class="badge ok">Normal</span>
+      <div class="info-text">Body temperature</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">📈 ECG</div>
+      <div id="ecg" class="metric-value" style="font-size:1.1rem;">--</div>
+      <div class="ecg-wave" id="ecgWave"></div>
+      <span id="ecgStatus" class="badge ok">Monitoring</span>
+    </div>
+    <div class="card">
+      <div class="metric-title">🍯 Glucose</div>
+      <div id="glucose" class="metric-value">-- mg/dL</div>
+      <span id="glucBadge" class="badge ok">Normal</span>
+      <div class="info-text">Blood sugar level</div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="card">
+      <div class="metric-title">🚨 Fall Detection</div>
+      <div id="fallStatus" class="metric-value" style="font-size:1.2rem;">Active</div>
+      <span class="fall-dot"></span>
+      <span class="badge ok" style="margin-left:6px;">Monitoring</span>
+      <div class="info-text">Motion sensors active</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">😰 Stress Level</div>
+      <div id="stress" class="metric-value" style="font-size:1.3rem;">Low</div>
+      <div class="stress-meter"><div class="stress-dot" id="stressIndicator"></div></div>
+      <div class="info-text">HRV analysis</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">👟 Steps</div>
+      <div id="steps" class="metric-value">--</div>
+      <span class="badge ok">Keep walking</span>
+      <div class="info-text">Today</div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="card">
+      <div class="metric-title">🔥 Calories</div>
+      <div id="calories" class="metric-value">-- kcal</div>
+      <span class="badge ok">Normal</span>
+      <div class="info-text">Today's burn</div>
+    </div>
+
+    <!-- 💊 MEDICATION TRACKER (replaces sleep - sleep was giving false alarms) -->
+    <div class="card" style="border-color:#59fba6;">
+      <div class="metric-title">💊 Medication Tracker</div>
+      <ul class="med-list">
+        <li><span>Iron + Folic Acid</span><span class="med-time">8:00 AM ✅</span></li>
+        <li><span>Calcium Supplement</span><span class="med-time">1:00 PM ⏳</span></li>
+        <li><span>Vitamin D3</span><span class="med-time">8:00 PM ⏳</span></li>
+        <li><span>Prenatal Vitamin</span><span class="med-time">9:00 PM ⏳</span></li>
+      </ul>
+      <div class="info-text" style="margin-top:6px;">Next: Calcium @ 1:00 PM</div>
+    </div>
+
+    <!-- Overall Health Condition -->
+    <div class="card" style="border:2px solid #7df9ff;background:linear-gradient(135deg,#1a1a2e,#16213e);">
+      <div class="metric-title">💬 Health Condition</div>
+      <div id="condition" class="metric-value" style="font-size:1.4rem;color:#7df9ff;">--</div>
+      <span class="badge ok">Updated</span>
+      <div class="info-text">Every 2 sec</div>
+    </div>
+  </div>
+
+  <!-- ─── REMINDERS PANEL ─── -->
+  <div class="reminders-panel">
+    <h2>🔔 Today's Reminders</h2>
+    <div class="reminder-grid">
+      <div class="reminder-card med">
+        <div class="r-icon">💊</div>
+        <div class="r-title">Calcium Supplement</div>
+        <div class="r-detail">500mg – After lunch</div>
+        <div class="r-time">1:00 PM</div>
+        <div class="countdown" id="medCountdown">Calculating...</div>
+      </div>
+      <div class="reminder-card lab">
+        <div class="r-icon">🧪</div>
+        <div class="r-title">Blood Glucose Test</div>
+        <div class="r-detail">Fasting test – Lab, Block B</div>
+        <div class="r-time">Tomorrow 7:30 AM</div>
+        <div class="r-detail" style="color:#f1c40f;">Fast from 10 PM tonight</div>
+      </div>
+      <div class="reminder-card exercise">
+        <div class="r-icon">🏃</div>
+        <div class="r-title">Today's Exercise</div>
+        <div class="r-detail" id="exerciseRec">Calculating based on vitals...</div>
+        <div class="r-time">6:30 PM – 7:15 PM</div>
+        <div class="countdown" id="exCountdown"></div>
+      </div>
+      <div class="reminder-card meditate">
+        <div class="r-icon">🧘</div>
+        <div class="r-title">Evening Meditation</div>
+        <div class="r-detail">Guided breathing – 20 min</div>
+        <div class="r-time">7:30 PM – 7:50 PM</div>
+        <div class="countdown" id="medCountdown2"></div>
+      </div>
+      <div class="reminder-card lab">
+        <div class="r-icon">🩺</div>
+        <div class="r-title">BP Check</div>
+        <div class="r-detail">Weekly check – Nurse station</div>
+        <div class="r-time">Friday 10:00 AM</div>
+      </div>
+      <div class="reminder-card med">
+        <div class="r-icon">💉</div>
+        <div class="r-title">Vitamin D3 Injection</div>
+        <div class="r-detail">Monthly – Doctor's clinic</div>
+        <div class="r-time">15 May 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Checklist -->
+  <div class="checklist">
+    <h2>📝 Daily Checklist</h2>
+    <p style="color:#888;font-size:.85rem;margin-bottom:10px;">Do you feel regular baby kicks?</p>
+    <label><input type="checkbox" id="kickYes"> Yes</label>
+    <label><input type="checkbox" id="kickNo"> No</label>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getDatabase, ref, onChildAdded, onChildChanged, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+    const firebaseConfig = {
+      databaseURL: "https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.vitals = {
+      heartRate:0, spo2:0, calories:0, bp:"--/--",
+      steps:0, temperature:0, stress:0, glucose:0,
+      fallDetected:"Active", ecg:"Normal"
+    };
+
+    // Use onChildAdded with a query to only fetch the last 10 items to prevent downloading the whole DB
+    // As new nodes are pushed by ESP, they will trigger onChildAdded automatically!
+    const vitalsRef = query(ref(db, '/'), limitToLast(10));
+
+    function processFirebaseData(snapshot) {
+      const data = snapshot.val();
+      if (data && typeof data === 'object') {
+        // If data has heart_rate directly inside it
+        if (data.heart_rate !== undefined) {
+          window.vitals.heartRate    = data.heart_rate !== undefined ? data.heart_rate : 0;
+          window.vitals.spo2         = data.spo2 !== undefined ? data.spo2 : 0;
+          window.vitals.calories     = data.calories !== undefined ? data.calories : 0;
+          window.vitals.bp           = data.blood_pressure !== undefined ? data.blood_pressure : "--/--";
+          window.vitals.steps        = data.steps !== undefined ? data.steps : 0;
+          window.vitals.temperature  = data.temperature !== undefined ? data.temperature : 0;
+          window.vitals.stress       = data.stress !== undefined ? data.stress : 0;
+          window.vitals.glucose      = data.glucose !== undefined ? data.glucose : 0;
+          window.vitals.fallDetected = data.fall_detected === true ? "Fall Detected!" : "Monitoring";
+          window.vitals.ecg          = data.ecg_level !== undefined ? data.ecg_level : "Normal";
+
+          localStorage.setItem('arm_hr', window.vitals.heartRate);
+          localStorage.setItem('arm_spo2', window.vitals.spo2);
+          localStorage.setItem('arm_stress', window.vitals.stress);
+        }
+      }
+    }
+
+    onChildAdded(vitalsRef, processFirebaseData);
+    onChildChanged(vitalsRef, processFirebaseData);
+
+  </script>
+
+  <script>
+    function badge(el,v,ok1,ok2,warn1,warn2){
+      const s=el.className.includes;
+      if(v>=ok1&&v<=ok2){el.textContent="Normal";el.className="badge ok";}
+      else if(v>=warn1&&v<=warn2){el.textContent="Warning";el.className="badge warn";}
+      else{el.textContent="Critical";el.className="badge crit";}
+    }
+
+    function updateECG(val){
+      const w=document.getElementById("ecgWave");
+      const s=document.getElementById("ecgStatus");
+      w.className="ecg-wave";
+      const v=(val||"").toLowerCase();
+      if(v.includes("irregular")||v.includes("arrhythmia")){
+        w.classList.add("irreg");s.textContent="Irregular ⚠️";s.className="badge crit";
+      } else {s.textContent="Normal Sinus";s.className="badge ok";}
+    }
+
+    function aiExercise(hr,spo2,stress){
+      let rec="";
+      if(spo2<94||hr>110){rec="🛌 Rest today — vitals need recovery";}
+      else if(hr>90||stress>7){rec="🧘 Light yoga & stretching (30 min)";}
+      else if(hr>=60&&hr<=80&&spo2>=97){rec="🏃 Moderate cardio: brisk walk/cycling";}
+      else{rec="🚶 Light walk + breathing exercises";}
+      document.getElementById("exerciseRec").textContent=rec;
+    }
+
+    function countdown(id,targetHour,targetMin){
+      const el=document.getElementById(id);
+      if(!el) return;
+      const now=new Date();
+      const target=new Date();
+      target.setHours(targetHour,targetMin,0,0);
+      if(target<now) target.setDate(target.getDate()+1);
+      const diff=target-now;
+      const h=Math.floor(diff/3600000);
+      const m=Math.floor((diff%3600000)/60000);
+      el.textContent=`⏱ In ${h}h ${m}m`;
+    }
+
+    function update(){
+      const v=window.vitals||{};
+      const hr=v.heartRate!==undefined?v.heartRate:72;
+      const spo2=v.spo2!==undefined?v.spo2:98;
+      const stress=v.stress!==undefined?v.stress:3;
+
+      document.getElementById("heartRate").textContent=(v.heartRate!==undefined?v.heartRate:"--")+" bpm";
+      document.getElementById("spo2").textContent=(v.spo2!==undefined?v.spo2:"--")+"%";
+      document.getElementById("bp").textContent=v.bp||"--/--";
+      document.getElementById("temperature").textContent=(v.temperature!==undefined?v.temperature:"--")+"°C";
+      document.getElementById("ecg").textContent=v.ecg||"--";
+      document.getElementById("glucose").textContent=(v.glucose!==undefined?v.glucose:"--")+" mg/dL";
+      document.getElementById("fallStatus").textContent=v.fallDetected!==undefined?v.fallDetected:"Active";
+      document.getElementById("steps").textContent=v.steps!==undefined?v.steps:"--";
+      document.getElementById("calories").textContent=(v.calories!==undefined?v.calories:"--")+" kcal";
+
+      const stressLevels=["Very Low","Low","Moderate","High","Very High"];
+      document.getElementById("stress").textContent=stressLevels[Math.min(Math.floor(stress/2),4)];
+      document.getElementById("stressIndicator").style.left=Math.min((stress/10)*100,88)+"%";
+
+      // Badges
+      badge(document.getElementById("hrBadge"),hr,60,100,40,60);
+      badge(document.getElementById("spo2Badge"),spo2,95,100,90,95);
+      badge(document.getElementById("glucBadge"),v.glucose||90,70,140,50,70);
+
+      // Health condition score
+      let score=0;
+      if(hr>=60&&hr<=100) score++;
+      if(spo2>=95) score++;
+      if((v.glucose||90)>=70&&(v.glucose||90)<=140) score++;
+      if(stress<=5) score++;
+      const labels=["Needs Attention","Fair","Good","Very Good","Excellent"];
+      document.getElementById("condition").textContent=labels[score]||"Good";
+
+      updateECG(v.ecg);
+      aiExercise(hr,spo2,stress);
+
+      // Countdowns
+      countdown("medCountdown",13,0);
+      countdown("exCountdown",18,30);
+      countdown("medCountdown2",19,30);
+    }
+
+    setInterval(update,2000);
+    update();
+  </script>
+</body>
+</html>
