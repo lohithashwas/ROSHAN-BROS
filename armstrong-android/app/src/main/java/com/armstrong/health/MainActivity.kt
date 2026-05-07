@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
         webView.webViewClient = object : WebViewClient() {
             @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
-                    // Let the webview handle standard web URLs (like vercel or firebase)
+                if (url != null && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://"))) {
+                    // Let the webview handle standard web and local file URLs
                     return false
                 }
                 try {
