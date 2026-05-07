@@ -86,7 +86,7 @@
 </head>
 <body>
   <h1>⌚ Armstrong Live Dashboard</h1>
-  <p class="subtitle">Real-time vitals from TI-Band · Updated every 2s</p>
+  <p class="subtitle">Real-time vitals from Armstrong · Updated every 2s</p>
 
   <div class="grid">
     <!-- Row 1 -->
@@ -179,59 +179,35 @@
     </div>
   </div>
 
-  <!-- ─── REMINDERS PANEL ─── -->
-  <div class="reminders-panel">
-    <h2>🔔 Today's Reminders</h2>
+  <!-- ─── LEADERBOARD PANEL ─── -->
+  <div class="reminders-panel" style="border-color: #59fba6;">
+    <h2>🏆 Maternal Health Leaderboard</h2>
+    <p style="font-size: .82rem; color: #aaa; margin-bottom: 14px; line-height: 1.4;">
+      Track and compare prenatal task compliance points with other Indian expectant mothers in your healthcare cohort.
+    </p>
     <div class="reminder-grid">
-      <div class="reminder-card med">
-        <div class="r-icon">💊</div>
-        <div class="r-title">Calcium Supplement</div>
-        <div class="r-detail">500mg – After lunch</div>
-        <div class="r-time">1:00 PM</div>
-        <div class="countdown" id="medCountdown">Calculating...</div>
+      <div class="reminder-card med" style="border-left-color: gold;">
+        <div class="r-icon">🥇</div>
+        <div class="r-title">#1 Priya Sharma</div>
+        <div class="r-detail">Completed Tasks: 9 / 10</div>
+        <div class="r-time">🌟 Points: 10/10</div>
       </div>
-      <div class="reminder-card lab">
-        <div class="r-icon">🧪</div>
-        <div class="r-title">Blood Glucose Test</div>
-        <div class="r-detail">Fasting test – Lab, Block B</div>
-        <div class="r-time">Tomorrow 7:30 AM</div>
-        <div class="r-detail" style="color:#f1c40f;">Fast from 10 PM tonight</div>
+      <div class="reminder-card med" style="border-left-color: #c0c0c0;">
+        <div class="r-icon">🥈</div>
+        <div class="r-title">#2 Anjali Mehta</div>
+        <div class="r-detail">Completed Tasks: 8 / 10</div>
+        <div class="r-time">🌟 Points: 9/10</div>
       </div>
-      <div class="reminder-card exercise">
-        <div class="r-icon">🏃</div>
-        <div class="r-title">Today's Exercise</div>
-        <div class="r-detail" id="exerciseRec">Calculating based on vitals...</div>
-        <div class="r-time">6:30 PM – 7:15 PM</div>
-        <div class="countdown" id="exCountdown"></div>
-      </div>
-      <div class="reminder-card meditate">
-        <div class="r-icon">🧘</div>
-        <div class="r-title">Evening Meditation</div>
-        <div class="r-detail">Guided breathing – 20 min</div>
-        <div class="r-time">7:30 PM – 7:50 PM</div>
-        <div class="countdown" id="medCountdown2"></div>
-      </div>
-      <div class="reminder-card lab">
-        <div class="r-icon">🩺</div>
-        <div class="r-title">BP Check</div>
-        <div class="r-detail">Weekly check – Nurse station</div>
-        <div class="r-time">Friday 10:00 AM</div>
-      </div>
-      <div class="reminder-card med">
-        <div class="r-icon">💉</div>
-        <div class="r-title">Vitamin D3 Injection</div>
-        <div class="r-detail">Monthly – Doctor's clinic</div>
-        <div class="r-time">15 May 2026</div>
+      <div class="reminder-card med" style="border-left-color: #cd7f32;">
+        <div class="r-icon">🥉</div>
+        <div class="r-title">#3 Sneha Reddy</div>
+        <div class="r-detail">Completed Tasks: 8 / 10</div>
+        <div class="r-time">🌟 Points: 9/10</div>
       </div>
     </div>
-  </div>
-
-  <!-- Daily Checklist -->
-  <div class="checklist">
-    <h2>📝 Daily Checklist</h2>
-    <p style="color:#888;font-size:.85rem;margin-bottom:10px;">Do you feel regular baby kicks?</p>
-    <label><input type="checkbox" id="kickYes"> Yes</label>
-    <label><input type="checkbox" id="kickNo"> No</label>
+    <div style="text-align: center; margin-top: 15px;">
+      <a href="leaderboard.html" style="color: #59fba6; font-size: .85rem; font-weight: 600; text-decoration: none; border-bottom: 1px dashed #59fba6; padding-bottom: 2px;">View Full Leaderboard ➔</a>
+    </div>
   </div>
 
   <!-- Firebase SDK -->

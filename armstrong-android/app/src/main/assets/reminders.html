@@ -11,18 +11,30 @@
     h1 { text-align: center; margin-bottom: 8px; color: #7df9ff; font-size: 1.6rem; letter-spacing: 1px; }
     .subtitle { text-align: center; color: #555; font-size: .85rem; margin-bottom: 24px; }
     
-    .panel { max-width: 600px; margin: 0 auto; background: #12121a; border-radius: 18px; padding: 20px; border: 1px solid #1a1a2e; }
+    .panel { max-width: 650px; margin: 0 auto 30px; background: #12121a; border-radius: 18px; padding: 20px; border: 1px solid #1a1a2e; }
     .panel h2 { color: #7df9ff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
     
-    .reminder-card { background: #0f0f1a; border-radius: 12px; padding: 16px; border-left: 4px solid #00bfff; margin-bottom: 14px; position: relative; }
+    .reminder-card { background: #0f0f1a; border-radius: 12px; padding: 16px; border-left: 4px solid #59fba6; margin-bottom: 14px; position: relative; transition: all .2s; }
     .reminder-card.med { border-left-color: #59fba6; }
     .reminder-card.lab { border-left-color: #f1c40f; }
-    .reminder-card.exercise { border-left-color: #ff6b6b; }
+    .reminder-card.alert { border-left-color: #ff6b6b; }
     
-    .r-icon { font-size: 1.5rem; margin-bottom: 6px; }
-    .r-title { font-size: .9rem; font-weight: 600; color: #e0e0e0; }
-    .r-detail { font-size: .78rem; color: #888; margin-top: 3px; }
-    .r-time { font-size: .8rem; color: #00bfff; font-weight: 600; margin-top: 6px; }
+    .r-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .r-icon { font-size: 1.5rem; }
+    .r-title { font-size: .95rem; font-weight: 600; color: #e0e0e0; }
+    .r-detail { font-size: .8rem; color: #aaa; margin-top: 4px; line-height: 1.4; }
+    .r-time { font-size: .8rem; color: #7df9ff; font-weight: 600; margin-top: 6px; }
+    
+    /* Persistent Interactive Checkbox */
+    .taken-checkbox { display: flex; align-items: center; gap: 6px; background: #1a1a2a; padding: 5px 12px; border-radius: 20px; font-size: .75rem; cursor: pointer; user-select: none; transition: background .2s; border: 1px solid #333; }
+    .taken-checkbox input { cursor: pointer; transform: scale(1.1); }
+    .taken-checkbox.checked { background: #1e3a24; border-color: #59fba6; color: #59fba6; }
+
+    /* Contact Table */
+    .contact-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    .contact-table th { background: rgba(0, 191, 255, 0.1); color: #7df9ff; padding: 10px; text-align: left; font-size: .8rem; }
+    .contact-table td { padding: 10px; border-bottom: 1px solid #1a1a2e; font-size: .78rem; color: #ccc; }
+    .contact-table tr:hover td { background: rgba(0, 191, 255, 0.04); }
     
     /* ─── MOBILE BOTTOM NAV ─── */
     .mob-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f0f1a; border-top: 1px solid #1a1a2e; z-index: 2000; padding: 8px 0; }
@@ -34,38 +46,220 @@
 </head>
 <body>
   <h1>🔔 Medication & Lab Reminders</h1>
-  <p class="subtitle">Personalized care reminders based on your clinical profile</p>
+  <p class="subtitle">Keep track of your daily health schedules and upcoming diagnostic tests</p>
 
   <div class="panel">
-    <h2>📋 Your Active Care Reminders</h2>
+    <h2>📋 Active Reminders</h2>
     
+    <!-- 1. Iron + Folic Acid -->
     <div class="reminder-card med">
-      <div class="r-icon">💊</div>
-      <div class="r-title">Iron Supplement (Ferrous Ascorbate)</div>
-      <div class="r-detail">Take with orange juice or water on an empty stomach. Avoid tea/coffee for 2h before and after.</div>
-      <div class="r-time">Daily – 1:00 PM (After Lunch)</div>
+      <div class="r-header">
+        <div>
+          <div class="r-title">Iron + Folic Acid Tablet</div>
+          <div class="r-detail">1 tablet – After breakfast. Supports haemoglobin & baby’s neural development.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_iron">
+          <input type="checkbox" id="chk_iron" onchange="toggleTaken('iron')"> Taken
+        </label>
+      </div>
+      <div class="r-time">⏰ 8:30 AM daily</div>
     </div>
 
-    <div class="reminder-card lab">
-      <div class="r-icon">🩺</div>
-      <div class="r-title">Blood Pressure Check</div>
-      <div class="r-detail">Weekly check-in at the local nurse station or automatic logging via TI-Band.</div>
-      <div class="r-time">Every Friday – 10:00 AM</div>
-    </div>
-
+    <!-- 2. Calcium + Vitamin D3 -->
     <div class="reminder-card med">
-      <div class="r-icon">💊</div>
-      <div class="r-title">Calcium Carbonate Tablet</div>
-      <div class="r-detail">Do not take at the same time as Iron supplements. Essential for fetal skeletal development.</div>
-      <div class="r-time">Daily – 7:30 PM (After Dinner)</div>
+      <div class="r-header">
+        <div>
+          <div class="r-title">Calcium + Vitamin D3</div>
+          <div class="r-detail">500 mg – After lunch. Supports bone strength for mother & baby.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_calcium">
+          <input type="checkbox" id="chk_calcium" onchange="toggleTaken('calcium')"> Taken
+        </label>
+      </div>
+      <div class="r-time">⏰ 1:00 PM daily</div>
     </div>
 
-    <div class="reminder-card lab">
-      <div class="r-icon">🔬</div>
-      <div class="r-title">CBC + Haemoglobin Lab Test</div>
-      <div class="r-detail">Required for monitoring iron levels, infection risk, and overall red blood cell counts.</div>
-      <div class="r-time">Monthly – 8:00 AM (Fasting)</div>
+    <!-- 3. Prenatal Multivitamin -->
+    <div class="reminder-card med">
+      <div class="r-header">
+        <div>
+          <div class="r-title">Prenatal Multivitamin</div>
+          <div class="r-detail">1 capsule – After dinner. Daily nutritional support during pregnancy.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_multi">
+          <input type="checkbox" id="chk_multi" onchange="toggleTaken('multi')"> Taken
+        </label>
+      </div>
+      <div class="r-time">⏰ 8:30 PM daily</div>
     </div>
+
+    <!-- 4. Water Intake -->
+    <div class="reminder-card med" style="border-left-color: #00bfff;">
+      <div class="r-header">
+        <div>
+          <div class="r-title">💧 Water Intake Reminder</div>
+          <div class="r-detail">Drink 250–300 ml water. Prevents dehydration & fatigue.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_water">
+          <input type="checkbox" id="chk_water" onchange="toggleTaken('water')"> Taken
+        </label>
+      </div>
+      <div class="r-time">⏰ Every 2–3 hours</div>
+    </div>
+
+    <!-- 5. Blood Pressure Monitoring -->
+    <div class="reminder-card lab">
+      <div class="r-header">
+        <div>
+          <div class="r-title">🩺 Blood Pressure Monitoring</div>
+          <div class="r-detail">Home BP monitor / Smart Band. Target: Below 140/90 mmHg.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_bp">
+          <input type="checkbox" id="chk_bp" onchange="toggleTaken('bp')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 Twice weekly – Morning</div>
+    </div>
+
+    <!-- 6. Blood Sugar Test -->
+    <div class="reminder-card lab">
+      <div class="r-header">
+        <div>
+          <div class="r-title">🩸 Blood Sugar Test</div>
+          <div class="r-detail">Fasting / Post-meal check. Important for gestational diabetes monitoring.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_sugar">
+          <input type="checkbox" id="chk_sugar" onchange="toggleTaken('sugar')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 Every 2–4 weeks</div>
+    </div>
+
+    <!-- 7. Fetal Movement Check -->
+    <div class="reminder-card med" style="border-left-color: #ffb347;">
+      <div class="r-header">
+        <div>
+          <div class="r-title">🤰 Fetal Movement Check</div>
+          <div class="r-detail">Kick count monitoring. Track baby movement consistency.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_kicks">
+          <input type="checkbox" id="chk_kicks" onchange="toggleTaken('kicks')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 Daily – After dinner</div>
+    </div>
+
+    <!-- 8. Weight Monitoring -->
+    <div class="reminder-card lab">
+      <div class="r-header">
+        <div>
+          <div class="r-title">⚖️ Weight Monitoring</div>
+          <div class="r-detail">Digital weighing scale. Helps monitor healthy pregnancy progress.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_weight">
+          <input type="checkbox" id="chk_weight" onchange="toggleTaken('weight')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 Weekly – Morning</div>
+    </div>
+
+    <!-- 9. CBC + Haemoglobin Test -->
+    <div class="reminder-card lab">
+      <div class="r-header">
+        <div>
+          <div class="r-title">🔬 CBC + Haemoglobin Test</div>
+          <div class="r-detail">Blood test – Diagnostic lab. Checks anaemia & infection indicators.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_cbc">
+          <input type="checkbox" id="chk_cbc" onchange="toggleTaken('cbc')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 Monthly</div>
+    </div>
+
+    <!-- 10. Urine Routine Test -->
+    <div class="reminder-card lab">
+      <div class="r-header">
+        <div>
+          <div class="r-title">🧪 Urine Routine Test</div>
+          <div class="r-detail">Protein & sugar screening. Detects infections & pregnancy complications.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_urine">
+          <input type="checkbox" id="chk_urine" onchange="toggleTaken('urine')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 Monthly</div>
+    </div>
+
+    <!-- 11. Prenatal Scan / Doctor Visit -->
+    <div class="reminder-card alert">
+      <div class="r-header">
+        <div>
+          <div class="r-title">🩻 Prenatal Scan / Doctor Visit</div>
+          <div class="r-detail">Hospital appointment. Tracks baby growth & maternal health.</div>
+        </div>
+        <label class="taken-checkbox" id="chkLabel_scan">
+          <input type="checkbox" id="chk_scan" onchange="toggleTaken('scan')"> Taken
+        </label>
+      </div>
+      <div class="r-time">📅 As scheduled by doctor</div>
+    </div>
+  </div>
+
+  <!-- CONTACT MODULE -->
+  <div class="panel">
+    <h2>📞 Pregnancy & Emergency Contact Details</h2>
+    <table class="contact-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Number</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🚑 Pregnancy Ambulance</td>
+          <td><strong>102</strong></td>
+          <td>Free ambulance for pregnant women & newborns</td>
+        </tr>
+        <tr>
+          <td>🚑 Medical Ambulance</td>
+          <td><strong>108</strong></td>
+          <td>Emergency medical transport</td>
+        </tr>
+        <tr>
+          <td>👩 Women Helpline</td>
+          <td><strong>181</strong></td>
+          <td>Women safety & counselling support</td>
+        </tr>
+        <tr>
+          <td>👮 Women Police</td>
+          <td><strong>1091</strong></td>
+          <td>Emergency police help for women</td>
+        </tr>
+        <tr>
+          <td>🩺 Health Helpline</td>
+          <td><strong>104</strong></td>
+          <td>Medical advice & pregnancy guidance</td>
+        </tr>
+        <tr>
+          <td>🤰 Pregnancy Support</td>
+          <td><strong>0444 631 4300</strong></td>
+          <td>Pregnancy counselling & doubt clarification</td>
+        </tr>
+        <tr>
+          <td>🧠 Mental Health</td>
+          <td><strong>14416</strong></td>
+          <td>Stress, anxiety & emotional support</td>
+        </tr>
+        <tr>
+          <td>☁️ Cloudnine Emergency</td>
+          <td><strong>99724 99724</strong></td>
+          <td>24×7 maternity assistance</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- MOBILE BOTTOM NAV -->
@@ -78,5 +272,34 @@
       <a href="blockchain.html"><span class="ic">🔐</span>Security</a>
     </div>
   </nav>
+
+  <script>
+    function toggleTaken(key) {
+      const chk = document.getElementById('chk_' + key);
+      const label = document.getElementById('chkLabel_' + key);
+      if (chk.checked) {
+        label.classList.add('checked');
+        localStorage.setItem('taken_' + key, 'true');
+      } else {
+        label.classList.remove('checked');
+        localStorage.removeItem('taken_' + key);
+      }
+    }
+
+    // Load persisted states on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const keys = ['iron', 'calcium', 'multi', 'water', 'bp', 'sugar', 'kicks', 'weight', 'cbc', 'urine', 'scan'];
+      keys.forEach(key => {
+        if (localStorage.getItem('taken_' + key) === 'true') {
+          const chk = document.getElementById('chk_' + key);
+          const label = document.getElementById('chkLabel_' + key);
+          if (chk && label) {
+            chk.checked = true;
+            label.classList.add('checked');
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>

@@ -172,7 +172,19 @@
 
 <script>
   const connectBtn = document.getElementById('connectBtn');
+  let isConnected = false;
+
   connectBtn.onclick = () => {
+    if (isConnected) {
+      // Disconnect/Uncheck option
+      isConnected = false;
+      connectBtn.innerHTML = `Connect Wallet`;
+      document.getElementById('walletInfo').innerHTML = `Wallet not connected`;
+      document.getElementById('balanceInfo').innerHTML = ``;
+      document.getElementById('networkInfo').innerHTML = ``;
+      return;
+    }
+
     document.getElementById('walletInfo').innerHTML = `🔄 Connecting to Firebase RTDB...`;
     
     fetch("https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy=\"$key\"&limitToLast=1")
@@ -183,6 +195,8 @@
           if (keys.length > 0) {
             const d = data[keys[0]];
             if (d && d.heart_rate !== undefined) {
+              isConnected = true;
+              connectBtn.innerHTML = `❌ Disconnect Wallet`;
               document.getElementById('walletInfo').innerHTML = `✅ Connected to Firebase: <span>Live Data Feed Active</span>`;
               document.getElementById('balanceInfo').innerHTML = `💓 HR: <span>${d.heart_rate} bpm</span> | 🫁 SpO2: <span>${d.spo2}%</span>`;
               document.getElementById('networkInfo').innerHTML = `🌐 DB Region: <span>asia-southeast1</span>`;

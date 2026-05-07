@@ -104,23 +104,7 @@
   <h2>📅 Upcoming Appointments</h2>
 
   <div id="appointment-list">
-    <div class="appointment">
-      <strong>Doctor ID:</strong> D202301<br>
-      <strong>Doctor Name:</strong> Dr. Kavitha R<br>
-      <strong>Date & Time:</strong> April 14, 2025 at 11:00 AM
-    </div>
-
-    <div class="appointment">
-      <strong>Doctor ID:</strong> D202311<br>
-      <strong>Doctor Name:</strong> Dr. Manoj Kiran<br>
-      <strong>Date & Time:</strong> April 17, 2025 at 3:30 PM
-    </div>
-
-    <div class="appointment">
-      <strong>Doctor ID:</strong> D202319<br>
-      <strong>Doctor Name:</strong> Dr. Ayesha Ahmed<br>
-      <strong>Date & Time:</strong> April 20, 2025 at 9:15 AM
-    </div>
+    <p id="noAppts" style="text-align: center; color: #888; font-size: .9rem; margin: 15px 0;">No upcoming appointments scheduled yet.</p>
   </div>
 
   <form id="add-appointment-form">
@@ -145,6 +129,9 @@
     const time = document.getElementById('apptTime').value;
 
     if (!name || !date || !time) return;
+
+    const noAppts = document.getElementById('noAppts');
+    if (noAppts) noAppts.remove();
 
     const doctorId = `D2023${100 + doctorCount++}`;
     const formattedDate = new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
