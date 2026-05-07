@@ -227,53 +227,49 @@
   </div>
 
   <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { getDatabase, ref, onChildAdded, onChildChanged, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
-
-    const firebaseConfig = {
-      databaseURL: "https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
+  <!-- Firebase SDK -->
+  <script>
     window.vitals = {
       heartRate:0, spo2:0, calories:0, bp:"--/--",
       steps:0, temperature:0, stress:0, glucose:0,
       fallDetected:"Active", ecg:"Normal"
     };
 
-    // Use onChildAdded with a query to only fetch the last 10 items to prevent downloading the whole DB
-    // As new nodes are pushed by ESP, they will trigger onChildAdded automatically!
-    const vitalsRef = query(ref(db, '/'), limitToLast(10));
+    function fetchVitals() {
+      fetch("https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy=\"$key\"&limitToLast=1")
+        .then(res => res.json())
+        .then(data => {
+          if (data && typeof data === 'object') {
+            const keys = Object.keys(data);
+            if (keys.length > 0) {
+              const d = data[keys[0]];
+              if (d && d.heart_rate !== undefined) {
+                window.vitals.heartRate    = d.heart_rate !== undefined ? d.heart_rate : 0;
+                window.vitals.spo2         = d.spo2 !== undefined ? d.spo2 : 0;
+                window.vitals.calories     = d.calories !== undefined ? d.calories : 0;
+                window.vitals.bp           = d.blood_pressure !== undefined ? d.blood_pressure : "--/--";
+                window.vitals.steps        = d.steps !== undefined ? d.steps : 0;
+                window.vitals.temperature  = d.temperature !== undefined ? d.temperature : 0;
+                window.vitals.stress       = d.stress !== undefined ? d.stress : 0;
+                window.vitals.glucose      = d.glucose !== undefined ? d.glucose : 0;
+                window.vitals.fallDetected = d.fall_detected === true ? "Fall Detected!" : "Monitoring";
+                window.vitals.ecg          = d.ecg_level !== undefined ? d.ecg_level : "Normal";
 
-    function processFirebaseData(snapshot) {
-      const data = snapshot.val();
-      if (data && typeof data === 'object') {
-        // If data has heart_rate directly inside it
-        if (data.heart_rate !== undefined) {
-          window.vitals.heartRate    = data.heart_rate !== undefined ? data.heart_rate : 0;
-          window.vitals.spo2         = data.spo2 !== undefined ? data.spo2 : 0;
-          window.vitals.calories     = data.calories !== undefined ? data.calories : 0;
-          window.vitals.bp           = data.blood_pressure !== undefined ? data.blood_pressure : "--/--";
-          window.vitals.steps        = data.steps !== undefined ? data.steps : 0;
-          window.vitals.temperature  = data.temperature !== undefined ? data.temperature : 0;
-          window.vitals.stress       = data.stress !== undefined ? data.stress : 0;
-          window.vitals.glucose      = data.glucose !== undefined ? data.glucose : 0;
-          window.vitals.fallDetected = data.fall_detected === true ? "Fall Detected!" : "Monitoring";
-          window.vitals.ecg          = data.ecg_level !== undefined ? data.ecg_level : "Normal";
-
-          localStorage.setItem('arm_hr', window.vitals.heartRate);
-          localStorage.setItem('arm_spo2', window.vitals.spo2);
-          localStorage.setItem('arm_stress', window.vitals.stress);
-        }
-      }
+                localStorage.setItem('arm_hr', window.vitals.heartRate);
+                localStorage.setItem('arm_spo2', window.vitals.spo2);
+                localStorage.setItem('arm_stress', window.vitals.stress);
+              }
+            }
+          }
+        })
+        .catch(err => {
+          console.log("Firebase fetch error:", err);
+        });
     }
 
-    onChildAdded(vitalsRef, processFirebaseData);
-    onChildChanged(vitalsRef, processFirebaseData);
-
+    // Poll Firebase every 2 seconds for real-time updates seamlessly without ES6 module crashes
+    setInterval(fetchVitals, 2000);
+    fetchVitals();
   </script>
 
   <script>

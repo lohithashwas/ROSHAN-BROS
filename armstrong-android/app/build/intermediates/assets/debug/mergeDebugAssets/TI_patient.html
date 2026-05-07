@@ -857,22 +857,12 @@
 <!-- Font Awesome for Bot Icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-  import { getDatabase, ref, onChildAdded, onChildChanged, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
-
-  const firebaseConfig = {
-    databaseURL: "https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
+<script>
   function applyPatientRow(d) {
     if (!d || d.heart_rate === undefined) return;
     localStorage.setItem('arm_hr',    d.heart_rate  || 75);
     localStorage.setItem('arm_spo2',  d.spo2        || 98);
-    localStorage.setItem('arm_stress',d.stress      || 3);
+    localStorage.setItem('arm_stress', d.stress      || 3);
 
     const set = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML=val; };
     set('bt',   (d.temperature !== undefined ? d.temperature : '--') + '°C');
@@ -884,17 +874,26 @@
     set('calory',(d.calories !== undefined ? d.calories : '--') + ' kcal');
   }
 
-  const vitalsRef = query(ref(db, '/'), limitToLast(10));
-  
-  function processFirebaseData(snapshot) {
-    const d = snapshot.val();
-    if (d && typeof d === 'object') {
-      applyPatientRow(d);
-    }
+  function fetchVitals() {
+    fetch("https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy=\"$key\"&limitToLast=1")
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data === 'object') {
+          const keys = Object.keys(data);
+          if (keys.length > 0) {
+            const d = data[keys[0]];
+            applyPatientRow(d);
+          }
+        }
+      })
+      .catch(err => {
+        console.log("Firebase fetch error (offline or network issue):", err);
+      });
   }
 
-  onChildAdded(vitalsRef, processFirebaseData);
-  onChildChanged(vitalsRef, processFirebaseData);
+  // Poll Firebase every 2 seconds for real-time updates seamlessly without ES6 module crashes
+  setInterval(fetchVitals, 2000);
+  fetchVitals();
 </script>
 
 </head>

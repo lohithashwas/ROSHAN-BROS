@@ -162,42 +162,32 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-  import { getDatabase, ref, onChildAdded, onChildChanged, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
-
-  const firebaseConfig = {
-    databaseURL: "https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
+<script>
   const connectBtn = document.getElementById('connectBtn');
   connectBtn.onclick = () => {
     document.getElementById('walletInfo').innerHTML = `🔄 Connecting to Firebase RTDB...`;
     
-    const vitalsRef = query(ref(db, '/'), limitToLast(10));
-    let dataFound = false;
-
-    function processFirebaseData(snapshot) {
-      const data = snapshot.val();
-      if (data && typeof data === 'object' && data.heart_rate !== undefined) {
-        dataFound = true;
-        document.getElementById('walletInfo').innerHTML = `✅ Connected to Firebase: <span>Live Data Feed Active</span>`;
-        document.getElementById('balanceInfo').innerHTML = `💓 HR: <span>${data.heart_rate} bpm</span> | 🫁 SpO2: <span>${data.spo2}%</span>`;
-        document.getElementById('networkInfo').innerHTML = `🌐 DB Region: <span>asia-southeast1</span>`;
-      }
-    }
-
-    onChildAdded(vitalsRef, processFirebaseData);
-    onChildChanged(vitalsRef, processFirebaseData);
-
-    setTimeout(() => {
-      if(!dataFound) {
+    fetch("https://health-band-46333-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy=\"$key\"&limitToLast=1")
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data === 'object') {
+          const keys = Object.keys(data);
+          if (keys.length > 0) {
+            const d = data[keys[0]];
+            if (d && d.heart_rate !== undefined) {
+              document.getElementById('walletInfo').innerHTML = `✅ Connected to Firebase: <span>Live Data Feed Active</span>`;
+              document.getElementById('balanceInfo').innerHTML = `💓 HR: <span>${d.heart_rate} bpm</span> | 🫁 SpO2: <span>${d.spo2}%</span>`;
+              document.getElementById('networkInfo').innerHTML = `🌐 DB Region: <span>asia-southeast1</span>`;
+              return;
+            }
+          }
+        }
         document.getElementById('walletInfo').innerHTML = `❌ Connected to Firebase, but no valid data found at root`;
-      }
-    }, 3000);
+      })
+      .catch(err => {
+        console.log("Firebase fetch error:", err);
+        document.getElementById('walletInfo').innerHTML = `❌ Connection failed (offline or database error)`;
+      });
   };
 </script>
 </body>
